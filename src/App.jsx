@@ -1,6 +1,3 @@
-// TO DO
-// - create test for password2
-
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import styles from './app.module.css';
@@ -20,7 +17,7 @@ const schema = yup.object({
   password2: yup
     .string()
     .required('Поле "Повтор пароля" должно быть заполнено')
-    .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, 'Пароль должен: содержать не менее 8 символов; состоять только из латинских букв и чисел; и содержать хотя бы одну букву и хотя бы одно число.'),
+    .oneOf([yup.ref('password'), null], 'Пароли должны совпадать')
 });
 
 let submittedOnce = false;
@@ -46,7 +43,6 @@ export const App = () => {
   const password2Error = errors.password2?.message;
 
   const onSubmit = (formData) => {
-    submittedOnce = true;
     console.log(formData);
   };
 
@@ -96,6 +92,7 @@ export const App = () => {
         className={styles.button}
         disabled={Object.keys(errors).length}
         ref={submitButtonRef}
+        onClick={() => submittedOnce = true}
       >Зарегистрироваться</button>
     </form>
   )
